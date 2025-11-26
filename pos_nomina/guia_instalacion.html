@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Guía de instalación — POS Nómina</title>
+    <style>
+        body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; line-height:1.5; margin:0; padding:0; color:#111 }
+        header { background:#0b5394; color:#fff; padding:20px 24px }
+        main { padding:24px; max-width:900px; margin:0 auto }
+        h1,h2,h3 { margin-top:1.2rem }
+        pre { background:#f4f4f4; padding:12px; border-radius:6px; overflow:auto }
+        code { font-family: Menlo, Monaco, "Courier New", monospace; background:#f1f5f9; padding:2px 6px; border-radius:4px }
+        nav ul { padding-left:1em }
+        .note { background:#fff7e6; border-left:4px solid #f0c36d; padding:10px; margin:12px 0; }
+        footer { text-align:center; color:#666; padding:18px 0; font-size:0.9rem }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Guía de instalación — POS Nómina</h1>
+        <p>Instrucciones paso a paso para instalar la aplicación en servidores Windows o Linux.</p>
+        <p style="margin-top:12px">
+            <span style="display:inline-flex;gap:12px;align-items:center;flex-wrap:wrap">
+                <a href="soporte.html"
+                   title="Regresar a la sección de soporte"
+                   aria-label="Regresar a soporte"
+                   role="button"
+                   style="background:#ffffff;color:#0b5394;padding:10px 14px;border-radius:8px;text-decoration:none;font-weight:700;box-shadow:0 6px 18px rgba(11,83,148,0.12);border:1px solid rgba(11,83,148,0.06);">
+                    Regresar a soporte
+                </a>
+
+                <a href="login.html"
+                   title="Ir a la pantalla de inicio de sesión"
+                   aria-label="Ir a inicio de sesión"
+                   role="button"
+                   style="background:transparent;color:#ffffff;padding:10px 14px;border-radius:8px;text-decoration:none;font-weight:700;border:2px solid rgba(255,255,255,0.18);">
+                    Iniciar sesión
+                </a>
+
+                <span style="color:rgba(255,255,255,0.95);font-size:0.95rem;margin-left:6px">
+                    ¿Necesitas algo más? Visita soporte o inicia sesión.
+                </span>
+            </span>
+        </p>
+    </header>
+
+    <main>
+        <nav>
+            <strong>Contenido</strong>
+            <ul>
+                <li><a href="#requisitos">Requisitos</a></li>
+                <li><a href="#preparacion">Preparación</a></li>
+                <li><a href="#instalacion-windows">Instalación (Windows)</a></li>
+                <li><a href="#instalacion-linux">Instalación (Linux)</a></li>
+                <li><a href="#configuracion">Configuración</a></li>
+                <li><a href="#verificacion">Verificación</a></li>
+                <li><a href="#desinstalar">Desinstalar / Actualizar</a></li>
+                <li><a href="#solucion">Solución de problemas</a></li>
+                <li><a href="#contacto">Contacto</a></li>
+            </ul>
+        </nav>
+
+        <section id="requisitos">
+            <h2>1. Requisitos</h2>
+            <ul>
+                <li>Sistema operativo: Windows Server 2016+ o Linux (Ubuntu 20.04+, CentOS 7+).</li>
+                <li>CPU: 2 vCPU mínimo (4+ recomendado).</li>
+                <li>Memoria: 4 GB RAM mínimo (8+ recomendado).</li>
+                <li>Almacenamiento: 10 GB libres (según volúmenes de datos).</li>
+                <li>Base de datos: MySQL 5.7+/MariaDB 10.2+/PostgreSQL 10+.</li>
+                <li>Node.js 14+ / Python 3.8+ u otro runtime según la aplicación (ver archivo README del proyecto).</li>
+                <li>Puerto de la aplicación: 8000 (configurable).</li>
+            </ul>
+        </section>
+
+        <section id="preparacion">
+            <h2>2. Preparación</h2>
+            <ol>
+                <li>Obtener el instalador o el paquete comprimido de la aplicación.</li>
+                <li>Tener credenciales de administrador para el servidor y la base de datos.</li>
+                <li>Crear usuario de servicio en el servidor (opcional pero recomendado): <code>posnomina</code>.</li>
+            </ol>
+        </section>
+
+        <section id="instalacion-windows">
+            <h2>3. Instalación en Windows</h2>
+            <ol>
+                <li>Copie el instalador (.msi/.exe) al servidor y ejecútelo como administrador.</li>
+                <li>Siga el asistente y seleccione carpeta de instalación (ej: <code>C:\Program Files\pos_nomina</code>).</li>
+                <li>Configurar archivo de entorno: abra <code>config\appsettings.json</code> y ajuste conexión a BD y puertos.</li>
+                <li>Si la aplicación usa servicios, instale el servicio (si el instalador no lo hace):</li>
+            </ol>
+            <pre><code>sc create PosNomina binPath= "C:\Program Files\pos_nomina\pos_nomina.exe" start= auto</code></pre>
+            <ol start="5">
+                <li>Iniciar servicio:</li>
+            </ol>
+            <pre><code>net start PosNomina</code></pre>
+        </section>
+
+        <section id="instalacion-linux">
+            <h2>4. Instalación en Linux</h2>
+            <ol>
+                <li>Subir paquete .tar.gz o clonar el repositorio:</li>
+            </ol>
+            <pre><code># ejemplo: clonar
+git clone https://example.com/pos_nomina.git /opt/pos_nomina
+cd /opt/pos_nomina</code></pre>
+            <ol start="2">
+                <li>Instalar dependencias según el runtime (ejemplo Node.js):</li>
+            </ol>
+            <pre><code># Node.js ejemplo
+curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+sudo apt-get install -y nodejs
+npm install --production</code></pre>
+            <ol start="3">
+                <li>Crear archivo de entorno <code>.env</code> o editar <code>config/app.conf</code> con la configuración de BD.</li>
+                <li>Crear unidad systemd para ejecutar la aplicación como servicio:</li>
+            </ol>
+            <pre><code>[Unit]
+Description=POS Nómina
+After=network.target
+
+[Service]
+User=posnomina
+WorkingDirectory=/opt/pos_nomina
+ExecStart=/usr/bin/node /opt/pos_nomina/index.js
+Restart=on-failure
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.target</code></pre>
+            <pre><code># guardar en /etc/systemd/system/posnomina.service
+sudo systemctl daemon-reload
+sudo systemctl enable posnomina
+sudo systemctl start posnomina</code></pre>
+        </section>
+
+        <section id="configuracion">
+            <h2>5. Configuración</h2>
+            <p>Ejemplo mínimo de variables de entorno (archivo .env):</p>
+            <pre><code>NODE_ENV=production
+PORT=8000
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_USER=pos_user
+DB_PASS=secret
+DB_NAME=pos_nomina</code></pre>
+            <p>Asegúrese de:</p>
+            <ul>
+                <li>Crear la base de datos y el usuario con los permisos necesarios.</li>
+                <li>Aplicar migraciones si aplica: <code>npm run migrate</code> o comando equivalente.</li>
+            </ul>
+        </section>
+
+        <section id="verificacion">
+            <h2>6. Verificación</h2>
+            <ol>
+                <li>Comprobar que el servicio corre:</li>
+            </ol>
+            <pre><code># Linux
+systemctl status posnomina
+
+# Windows
+sc query PosNomina</code></pre>
+            <ol start="2">
+                <li>Probar endpoint raíz en servidor o desde navegador: <code>http://IP_SERVIDOR:8000/health</code>.</li>
+                <li>Revisar logs para errores (ruta de logs según configuración):</li>
+            </ol>
+            <pre><code>/var/log/pos_nomina/app.log
+C:\ProgramData\pos_nomina\logs\app.log</code></pre>
+        </section>
+
+        <section id="desinstalar">
+            <h2>7. Desinstalar / Actualizar</h2>
+            <ul>
+                <li>Detener el servicio y deshabilitarlo:</li>
+            </ul>
+            <pre><code># Linux
+sudo systemctl stop posnomina
+sudo systemctl disable posnomina
+
+# Windows
+net stop PosNomina
+sc delete PosNomina</code></pre>
+            <ul>
+                <li>Para actualizar: haga copia de seguridad de la configuración y la base de datos, sustituya los archivos por la nueva versión y reinicie el servicio.</li>
+            </ul>
+        </section>
+
+        <section id="solucion">
+            <h2>8. Solución de problemas común</h2>
+            <ul>
+                <li>Conexión a BD fallida: verificar host/puerto/usuario/contraseña y que la BD acepte conexiones remotas.</li>
+                <li>Puerto ocupado: cambie el puerto en la configuración o libere el puerto.</li>
+                <li>Errores de permiso: asegure permisos de lectura/escritura para el usuario del servicio en las carpetas necesarias.</li>
+                <li>Logs vacíos: activar modo debug temporalmente en configuración para más detalles.</li>
+            </ul>
+        </section>
+
+        <section id="contacto">
+            <h2>9. Contacto y soporte</h2>
+            <p>Si necesita ayuda adicional, proporcione:</p>
+            <ul>
+                <li>Versiones del sistema operativo y de la aplicación.</li>
+                <li>Extractos relevantes de logs.</li>
+                <li>Comandos ejecutados y mensajes de error.</li>
+            </ul>
+            <p class="note">Soporte: correo soporte@tuempresa.com · Tel: +00 000 000</p>
+        </section>
+
+        <footer>
+            <p>Posible plantilla de guía — adapte pasos y comandos a la arquitectura real de su aplicación.</p>
+        </footer>
+    </main>
+</body>
+</html>

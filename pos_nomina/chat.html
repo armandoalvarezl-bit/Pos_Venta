@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Asistente Generativo Local — POS Nómina</title>
+<style>
+    :root{
+        --bg:#f5f7fb; --card:#fff; --accent:#0b74de; --muted:#6b7280;
+    }
+    body{font-family:Inter,system-ui,Arial; background:linear-gradient(180deg,var(--bg),#eef2f7); margin:0; padding:28px; color:#0f172a;}
+    .wrap{max-width:980px;margin:0 auto;background:var(--card);border-radius:12px;padding:20px;box-shadow:0 10px 30px rgba(2,6,23,0.06);}
+    header{display:flex;align-items:center;gap:16px;margin-bottom:12px}
+    .logo{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#0369a1);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700}
+    h1{font-size:1.15rem;margin:0}
+    p.lead{margin:0;color:var(--muted);font-size:0.95rem}
+    .chat-area{display:grid;grid-template-columns:1fr 320px;gap:18px;margin-top:18px;min-height:420px}
+    .panel{background:#fff;border-radius:10px;padding:14px;box-shadow:0 6px 20px rgba(2,6,23,0.04);display:flex;flex-direction:column}
+    .messages{flex:1;overflow:auto;padding:8px;display:flex;flex-direction:column;gap:12px}
+    .msg{max-width:78%;padding:10px 12px;border-radius:10px;line-height:1.4}
+    .msg.user{margin-left:auto;background:var(--accent);color:#fff;border-bottom-right-radius:2px}
+    .msg.bot{margin-right:auto;background:#f3f4f6;color:#0f172a;border-bottom-left-radius:2px}
+    .meta{font-size:0.82rem;color:var(--muted);margin-top:6px}
+    textarea{width:100%;min-height:70px;border-radius:8px;border:1px solid #e6eef8;padding:10px;font-family:inherit;font-size:0.95rem;resize:vertical}
+    .controls{display:flex;gap:8px;margin-top:10px;align-items:center}
+    .btn{background:var(--accent);color:#fff;padding:10px 14px;border-radius:8px;border:0;cursor:pointer;font-weight:600}
+    .btn.secondary{background:#fff;color:var(--accent);border:1px solid #dbeefe}
+    .sidebar{display:flex;flex-direction:column;gap:10px}
+    .card{background:#fbfdff;padding:10px;border-radius:8px;border:1px solid #eef2f7}
+    .quick{display:flex;flex-wrap:wrap;gap:8px}
+    .chip{background:#fff;border:1px solid #e6eef8;padding:8px 10px;border-radius:8px;cursor:pointer}
+    .opt{display:flex;gap:8px;align-items:center}
+    .small{font-size:0.9rem;color:var(--muted)}
+    .toggle{display:flex;gap:8px;align-items:center}
+    footer{margin-top:12px;color:var(--muted);font-size:0.85rem;text-align:center}
+    @media (max-width:900px){.chat-area{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap" role="application" aria-label="Asistente Generativo Local">
+    <header>
+        <div class="logo" aria-hidden="true">POS</div>
+        <div>
+            <h1>Asistente Generativo Local — POS Nómina</h1>
+            <p class="lead">Respuestas inteligentes sin APIs externas. Motor híbrido: recuperación + plantillas + generación local.</p>
+        </div>
+        <div style="margin-left:auto" class="opt">
+            <button id="btnExplain" class="btn secondary">Cómo genera</button>
+        </div>
+    </header>
+
+    <div class="chat-area">
+        <section class="panel" aria-live="polite">
+            <div class="messages" id="messages">
+                <div>
+                    <div class="msg bot">Hola — soy el asistente local. Puedo guiarte en nómina, accesos, reportes y resolver errores. ¿En qué te ayudo?</div>
+                    <div class="meta small">Agente • ahora</div>
+                </div>
+            </div>
+
+            <div style="margin-top:8px">
+                <textarea id="input" placeholder="Escribe tu consulta... (ej.: 'No puedo ingresar', '¿Cómo hago la nómina de abril?')"></textarea>
+                <div class="controls">
+                    <button id="send" class="btn">Enviar</button>
+                    <button id="regen" class="btn secondary">Regenerar</button>
+                    <div style="margin-left:auto" class="small">Modo generativo local: <strong id="mode">Híbrido</strong></div>
+                </div>
+            </div>
+        </section>
+
+        <aside class="sidebar">
+            <div class="card">
+                <strong>Respuestas rápidas</strong>
+                <div class="quick" style="margin-top:8px">
+                    <div class="chip" data-q="No puedo acceder">No puedo acceder</div>
+                    <div class="chip" data-q="Tengo un error al generar la nómina">Error al generar nómina</div>
+                    <div class="chip" data-q="Cómo agrego un empleado">Agregar empleado</div>
+                    <div class="chip" data-q="Necesito reportes de abril">Reportes</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <strong>Opciones</strong>
+                <div style="margin-top:8px" class="toggle">
+                    <label class="small"><input type="checkbox" id="useMarkov" checked> Usar generación (Markov)</label>
+                    <label class="small"><input type="checkbox" id="useTemplates" checked> Usar plantillas</label>
+                </div>
+                <div style="margin-top:8px" class="small">Memoria: <span id="memCount">0</span> items</div>
+            </div>
+
+            <div class="card">
+                <strong>Base de conocimiento (editable)</strong>
+                <div class="small" style="margin-top:8px">
+                    <em>Ejemplos de respuestas y guías que el motor usa para construir respuestas.</em>
+                    <ul id="kbList">
+                        <!-- populated by JS -->
+                    </ul>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <footer>Este motor genera respuestas variadas localmente (plantillas + texto recuperado + Markov). Puedes editar la KB para mejorar resultados.</footer>
+</div>
+
+<!-- SCRIPT: motor generativo local -->
+<script>
+/* ============================
+   ESTRUCTURAS Y DATOS (KB)
+   ============================ */
+const KB = [
+`Para procesar una nómina: accede a Nómina → Nuevo proceso. Selecciona el periodo, registra novedades (horas extra, incapacidades, comisiones), valida los cálculos y genera la planilla. Exporta a PDF o Excel desde el botón 'Exportar'.`,
+`Si no puedes iniciar sesión: verifica usuario y contraseña, limpia cookies o prueba en ventana privada. Si el mensaje indica 'usuario no encontrado' confirma que tu cuenta esté activa y asociada a la empresa.`,
+`Al reportar un error incluye: 1) captura o mensaje exacto, 2) módulo donde ocurrió, 3) pasos para replicarlo. Con eso el soporte puede replicar y dar una solución precisa.`,
+`Para agregar un empleado: Empleados → Nuevo. Rellena datos personales, tipo de contrato, salario, jornada y datos bancarios. Guarda y verifica en la lista de empleados.`,
+`Reportes: Reportes → Selecciona tipo (nómina, pagos, afiliaciones). Escoge rango de fechas y formato (PDF/Excel). Para grandes conjuntos usa filtros por centro de costo o departamento.`
+];
+
+/* ============================
+   MEMORIA DE CONVERSACIÓN
+   ============================ */
+let memory = []; // guarda mensajes recientes (texto)
+function pushMemory(text){
+    memory.push(text.toLowerCase());
+    if(memory.length>12) memory.shift();
+    document.getElementById('memCount').innerText = memory.length;
+}
+
+/* ============================
+   UTILIDADES LINGÜÍSTICAS
+   ============================ */
+function tokenize(s){ return s.toLowerCase().replace(/[^\wáéíóúñ\s]/g,'').split(/\s+/).filter(Boolean); }
+function containsAny(text, keywords){
+    const t = text.toLowerCase();
+    return keywords.some(k => t.includes(k));
+}
+function nowTime(){ const d=new Date(); return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0'); }
+
+/* ============================
+   MOTOR DE INTENCIONES (MEJORADO)
+   ============================ */
+const INTENTS = [
+    { name:'acceso', keywords:['acced','entrar','ingres','login','contrase','clave','usuario'], priority:8, label:'Problemas de acceso' },
+    { name:'nomina', keywords:['nómina','nomina','liquid','pagar','planilla','procesar nómina'], priority:7, label:'Procesar nómina' },
+    { name:'error', keywords:['error','falla','bug','excepción','no funciona','crash','congel'], priority:9, label:'Reporte de error' },
+    { name:'empleado', keywords:['emplead','nuevo empleado','registrar empleado','agregar empleado'], priority:6, label:'Gestión de empleados' },
+    { name:'reportes', keywords:['reporte','reportes','exportar','pdf','excel','informe'], priority:5, label:'Generar reportes' },
+    { name:'saludo', keywords:['hola','buenas','saludos'], priority:0, label:'Saludo' }
+];
+
+function detectIntent(text){
+    const t = text.toLowerCase();
+    let best = {score:0, intent:null};
+    for(const it of INTENTS){
+        let score = 0;
+        for(const kw of it.keywords){
+            if(t.includes(kw)) score += 2;
+            else {
+                // similitud simple: comparte tokens
+                const tk = tokenize(kw);
+                const tokens = tokenize(t);
+                const common = tk.filter(x => tokens.includes(x)).length;
+                if(common) score += common * 0.6;
+            }
+        }
+        // boost si memoria reciente tiene palabras clave
+        for(const mem of memory){
+            for(const kw of it.keywords) if(mem.includes(kw)) score += 0.25;
+        }
+        score += it.priority * 0.15;
+        if(score > best.score){ best = {score, intent:it}; }
+    }
+    return best.intent;
+}
+
+/* ============================
+   PLANTILLAS DINÁMICAS (slotfilling)
+   ============================ */
+const TEMPLATES = {
+    acceso: [
+        "Veo que tienes un problema de acceso. Revisa usuario/contraseña y que tu cuenta esté activa. ¿Qué mensaje exacto muestra la pantalla? Puedo guiarte paso a paso para resetear la clave.",
+        "Cuando hay problemas de login conviene probar: 1) Recuperar contraseña; 2) Verificar que el usuario exista; 3) Revisar permisos. Si quieres, hago el paso a paso desde aquí."
+    ],
+    nomina: [
+        "Para procesar la nómina de {periodo}, sigue: Nómina → Nuevo → selecciona periodo → registra novedades → procesa cálculos → genera planilla. ¿Quieres que te guíe con un ejemplo para {periodo}?",
+        "Puedo ayudarte a calcular horas extra, recargos y prestaciones antes de generar la planilla. Indícame el periodo o el tipo de novedad que deseas incluir."
+    ],
+    error: [
+        "Gracias por reportar el error. Para diagnosticar necesito: 1) mensaje exacto, 2) módulo donde sucedió, 3) pasos para replicarlo. ¿Puedes darme esa información?",
+        "Si puedes compartir una captura o texto del error, te doy los pasos concretos para resolverlo o para escalarlo correctamente al equipo de desarrollo."
+    ],
+    empleado: [
+        "Para registrar un empleado: Empleados → Nuevo → completa datos personales, contrato y salario → guardar. ¿Quieres que te genere un ejemplo con campos obligatorios?",
+        "Puedo generar la plantilla con los campos mínimos para importar empleados por CSV (nombre, tipo de documento, número, salario, fecha ingreso). ¿La quieres?"
+    ],
+    reportes: [
+        "Indica el tipo de reporte (nómina, pagos, afiliaciones) y el rango de fechas. Te diré el paso a paso para obtenerlo en PDF o Excel.",
+        "Si necesitas un filtro (centro de costo, departamento) dímelo y te explico cómo configurarlo antes de exportar."
+    ],
+    fallback: [
+        "No estoy seguro de entender completamente. ¿Puedes dar más detalle (módulo, mensaje de error o qué esperabas)?",
+        "Puedo ayudarte con nóminas, empleados, accesos, reportes y errores. Dime en cuál módulo estás para darte instrucciones concretas."
+    ]
+};
+
+/* ============================
+   MARKOV SIMPLE (n-gram de orden 2)
+   Construimos cadena a partir de KB para generación variada
+   ============================ */
+class Markov {
+    constructor(){
+        this.model = {}; // token -> array de next tokens
+        this.starts = [];
+    }
+    train(text){
+        const words = tokenize(text);
+        if(words.length<2) return;
+        this.starts.push(words[0]);
+        for(let i=0;i<words.length-1;i++){
+            const w = words[i];
+            const nxt = words[i+1];
+            if(!this.model[w]) this.model[w]=[];
+            this.model[w].push(nxt);
+        }
+    }
+    generate(max=40, seed=null){
+        const keys = Object.keys(this.model);
+        if(keys.length===0) return "";
+        let w = seed && this.model[seed] ? seed : this.starts[Math.floor(Math.random()*this.starts.length)];
+        const out=[w];
+        for(let i=0;i<max-1;i++){
+            const arr = this.model[w];
+            if(!arr || arr.length===0) break;
+            w = arr[Math.floor(Math.random()*arr.length)];
+            out.push(w);
+        }
+        // capitalize first and join with spaces, fix spanish punctuation spacing naive
+        let res = out.join(' ');
+        res = res.replace(/\s+([.,;:!?])/g,'$1');
+        res = res.charAt(0).toUpperCase()+res.slice(1);
+        return res + '.';
+    }
+}
+
+const markov = new Markov();
+KB.forEach(t => markov.train(t));
+
+/* ============================
+   ENSEMBLE: COMBINAR MÉTODOS PARA RESPONDER
+   ============================ */
+function generateResponse(userText, options={useMarkov:true,useTemplates:true}){
+    pushMemory(userText);
+
+    const intent = detectIntent(userText);
+    // récup KB matches
+    const kbMatches = KB.filter(kb => {
+        const tokens = tokenize(userText);
+        return tokens.some(tok => kb.toLowerCase().includes(tok));
+    });
+
+    // 1) Si intent encontrado y templates activadas -> slotfill
+    if(intent && options.useTemplates){
+        const tpls = TEMPLATES[intent.name] || TEMPLATES.fallback;
+        let tpl = tpls[Math.floor(Math.random()*tpls.length)];
+        // extraer entidad simple: periodo (ej: 'abril', '2025', 'abril 2025')
+        const periodoMatch = userText.match(/\b(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)(?:\s+\d{4})?\b/i);
+        const periodo = periodoMatch ? periodoMatch[0] : 'el periodo seleccionado';
+        tpl = tpl.replace(/\{periodo\}/g, periodo);
+        // si hay coincidencia exacta en KB, adjuntar un extracto
+        if(kbMatches.length){
+            tpl += " " + (kbMatches[0].split('. ')[0]) + ".";
+        }
+        // a veces mezclar con Markov para naturalidad
+        if(options.useMarkov && Math.random() < 0.35){
+            const seedToken = tokenize(userText)[0] || null;
+            const mk = markov.generate(18, seedToken);
+            return tpl + " " + mk;
+        }
+        return tpl;
+    }
+
+    // 2) Si no hay intent o templates deshabilitadas, usar KB match + Markov
+    if(kbMatches.length){
+        let out = kbMatches[0];
+        if(options.useMarkov){
+            const mk = markov.generate(16);
+            out += " " + mk;
+        }
+        return out;
+    }
+
+    // 3) fallback generativo: plantillas de fallback y Markov
+    let fallback = TEMPLATES.fallback[Math.floor(Math.random()*TEMPLATES.fallback.length)];
+    if(options.useMarkov){
+        fallback += " " + markov.generate(18);
+    }
+    return fallback;
+}
+
+/* ============================
+   INTERFAZ Y EVENTOS
+   ============================ */
+const messagesEl = document.getElementById('messages');
+const inputEl = document.getElementById('input');
+const sendBtn = document.getElementById('send');
+const regenBtn = document.getElementById('regen');
+const useMarkovEl = document.getElementById('useMarkov');
+const useTemplatesEl = document.getElementById('useTemplates');
+const kbListEl = document.getElementById('kbList');
+const memCountEl = document.getElementById('memCount');
+const btnExplain = document.getElementById('btnExplain');
+
+function appendMessage(text, who='bot'){
+    const wrapper = document.createElement('div');
+    const msg = document.createElement('div');
+    msg.className = 'msg ' + (who==='user'?'user':'bot');
+    msg.textContent = text;
+    wrapper.appendChild(msg);
+    const meta = document.createElement('div');
+    meta.className='meta small';
+    meta.textContent = (who==='user'?'Tú • ':'Asistente • ') + nowTime();
+    wrapper.appendChild(meta);
+    messagesEl.appendChild(wrapper);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+
+sendBtn.addEventListener('click', () => {
+    const txt = inputEl.value.trim();
+    if(!txt) return;
+    appendMessage(txt,'user');
+    inputEl.value = '';
+    // generar respuesta
+    const resp = generateResponse(txt,{useMarkov:useMarkovEl.checked,useTemplates:useTemplatesEl.checked});
+    // mostrar typing breve
+    showTyping(()=>{ appendMessage(resp,'bot'); });
+});
+
+regenBtn.addEventListener('click', () => {
+    // toma último usuario en memoria (si existe) o último mensaje del DOM
+    const lastUser = memory.length ? memory[memory.length-1] : null;
+    if(!lastUser){
+        // intentar extraer del último user msg en mensajesEl
+        const nodes = Array.from(messagesEl.querySelectorAll('.msg.user'));
+        if(nodes.length===0) return;
+        const txt = nodes[nodes.length-1].textContent;
+        // regenar a partir de eso
+        const resp = generateResponse(txt,{useMarkov:useMarkovEl.checked,useTemplates:useTemplatesEl.checked});
+        showTyping(()=>{ appendMessage(resp,'bot'); });
+        return;
+    }
+    const resp = generateResponse(lastUser,{useMarkov:useMarkovEl.checked,useTemplates:useTemplatesEl.checked});
+    showTyping(()=>{ appendMessage(resp,'bot'); });
+});
+
+function showTyping(cb){
+    // simple indicator
+    const t = document.createElement('div');
+    t.className='msg bot';
+    t.textContent = '...';
+    messagesEl.appendChild(t);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+    setTimeout(()=>{ t.remove(); cb(); }, 700 + Math.random()*900);
+}
+
+/* click chips quick replies */
+document.querySelectorAll('.chip').forEach(el=>{
+    el.addEventListener('click', ()=> {
+        inputEl.value = el.dataset.q;
+        inputEl.focus();
+    });
+});
+
+/* populate KB list */
+function refreshKB(){
+    kbListEl.innerHTML = '';
+    KB.forEach((k,i) => {
+        const li = document.createElement('li');
+        li.textContent = k;
+        kbListEl.appendChild(li);
+    });
+}
+refreshKB();
+
+/* explain generation method */
+btnExplain.addEventListener('click', ()=>{
+    const expl = [
+        "Este asistente combina: (1) detección de intención por palabras clave + memoria; (2) plantillas paramétricas para respuestas directas; (3) modelo Markov local entrenado con la KB para generar frases variadas; (4) recuperación de fragmentos relevantes de la KB.",
+        "Si quieres respuestas más precisas añade más textos al KB (guías, manuales) o habilita plantillas específicas. Para 'IA real' (LLM) necesitarías integrar un modelo local pesado o un servicio, lo cual es otro paso."
+    ];
+    appendMessage(expl.join(' '),'bot');
+});
+
+/* mantener memoria y contador actualizados */
+setInterval(()=>{ document.getElementById('memCount').innerText = memory.length; }, 900);
+
+/* pequeño atajo: enter para enviar */
+inputEl.addEventListener('keydown', (e)=>{ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); sendBtn.click(); } });
+
+/* iniciar con un ejemplo de memoria para demostrar contexto */
+pushMemory("usuario preguntó sobre nómina abril");
+</script>
+</body>
+</html>

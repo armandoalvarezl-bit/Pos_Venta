@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Cotizaciones generadas</title>
+<style>
+    body{
+        font-family: Arial;
+        padding: 20px;
+        background:#f8f8f8;
+    }
+    table{
+        width:100%;
+        border-collapse: collapse;
+        background:white;
+        box-shadow:0 2px 4px rgba(0,0,0,0.1);
+    }
+    th, td{
+        padding:10px;
+        border-bottom:1px solid #ddd;
+        text-align:left;
+    }
+    th{
+        background:#2b4ba3;
+        color:white;
+        text-transform:uppercase;
+        font-size:14px;
+    }
+</style>
+</head>
+
+<body>
+<h2>Cotizaciones generadas</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Fecha</th>
+            <th>Cliente</th>
+            <th>Total</th>
+            <th>Ver</th>
+        </tr>
+    </thead>
+    <tbody id="lista-facturas"></tbody>
+</table>
+
+<script>
+// Cargar facturas guardadas
+let facturas = JSON.parse(localStorage.getItem("facturas")) || [];
+let tabla = document.getElementById("lista-facturas");
+
+facturas.forEach(f => {
+    let fila = document.createElement("tr");
+    fila.innerHTML = `
+        <td>${f.id}</td>
+        <td>${f.fecha}</td>
+        <td>${f.cliente}</td>
+        <td>$${f.total}</td>
+        <td><button onclick="verFactura('${f.id}')">Abrir</button></td>
+    `;
+    tabla.appendChild(fila);
+});
+
+function verFactura(id){
+    localStorage.setItem("facturaActual", id);
+    window.location.href = "ver_factura.html";
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,110 @@
+:root{
+      --accent:#0b63a8;
+      --muted:#666;
+      --card-bg: #fff;
+      --paper-bg: #f5f7fb;
+      --shadow: 0 6px 18px rgba(12,24,40,0.08);
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    body{
+      margin:0;
+      background: var(--paper-bg);
+      color:#111;
+      padding:24px;
+    }
+    .wrap{
+      max-width:1100px;
+      margin:0 auto;
+      display:grid;
+      grid-template-columns: 1fr 420px;
+      gap:20px;
+      align-items:start;
+    }
+    .card{
+      background:var(--card-bg);
+      border-radius:12px;
+      box-shadow:var(--shadow);
+      padding:18px;
+    }
+    h1{ margin:0 0 12px; font-size:20px; color:var(--accent) }
+    label{ font-size:13px; color:var(--muted); display:block; margin-bottom:6px }
+    input[type="text"], input[type="number"], select, textarea{
+      width:100%; padding:8px 10px; border:1px solid #e3e8ef; border-radius:8px;
+      font-size:14px; box-sizing:border-box;
+    }
+    .grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:10px }
+    .actions{ display:flex; gap:8px; margin-top:12px; flex-wrap:wrap }
+    button{ padding:8px 12px; border-radius:8px; border:0; cursor:pointer; font-weight:600 }
+    .btn-primary{ background:var(--accent); color:#fff }
+    .btn-ghost{ background:transparent; border:1px solid #dbe6f2; color:var(--accent) }
+    .small{ font-size:13px; padding:6px 8px }
+    table{ width:100%; border-collapse:collapse; margin-top:8px }
+    th, td{ padding:8px; text-align:left; border-bottom:1px solid #f0f2f6; font-size:14px }
+    .right{ text-align:right }
+    .total-row td{ font-weight:700 }
+    .receipt{
+      width:100%;
+      padding:18px;
+      box-sizing:border-box;
+    }
+
+    /* Receipt visual styling (print & export friendly) */
+    /* Remove card visuals around receipt-area so exported image is clean */
+    #receipt-area{
+      background:transparent !important;
+      padding:0 !important;
+      box-shadow:none !important;
+      border-radius:0 !important;
+    }
+
+    /* IMPORTANT: make #receipt itself the narrow, printable invoice */
+    #receipt{
+      width: 420px;               /* tamaño ideal para factura (ajustable) */
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 12px 20px;        /* espacio interno que se verá en el PDF */
+      box-sizing: border-box;
+      color: #111;
+      font-size: 13px;
+    }
+
+    .invoice-header{ display:flex; justify-content:space-between; align-items:center; gap:12px }
+    .company{
+      font-weight:700; color:var(--accent);
+    }
+    .muted{ color:var(--muted); font-size:13px }
+    .logo-placeholder{
+      width:120px; height:50px; background:linear-gradient(90deg,#eaf4ff,#f7fbff);
+      display:flex; align-items:center; justify-content:center; border-radius:6px; color:var(--accent);
+      font-weight:700; letter-spacing:0.6px;
+    }
+
+    /* print styles */
+    @media print{
+      body{ padding:0; background:#fff }
+      .wrap{ grid-template-columns:1fr; padding:0 }
+      .no-print{ display:none }
+      /* When printing we want only the #receipt content visible and narrow */
+      .card:not(:has(#receipt-area)) { display:none } /* hide other cards if browser supports :has */
+      /* fallback: hide everything then show receipt-area */
+      body * { visibility: hidden; }
+      #receipt-area, #receipt, #receipt * { visibility: visible; }
+      #receipt-area { position: absolute; left: 0; top: 0; width: 100%; padding: 0; background: transparent; }
+      #receipt { margin: 8mm auto; box-shadow:none; }
+    }
+    .header{
+      text-align:center; 
+      margin-bottom:20px; 
+      font-size:14px; 
+      color:var(--muted);
+    }
+    /* historial modal */
+    .modal{
+      position:fixed; inset:0; display:none; align-items:center; justify-content:center; z-index:60;
+      background:rgba(10,20,30,0.45);
+    }
+    .modal.open{ display:flex }
+    .modal .card{ width:90%; max-width:900px; max-height:80vh; overflow:auto }
+    .hint{ font-size:13px; color:var(--muted) }
+
+    footer.note{ margin-top:10px; font-size:12px; color:var(--muted) }
