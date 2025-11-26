@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Notas de la versión — POS Nómina</title>
+    <meta name="description" content="Historial de actualizaciones y cambios en POS Nómina." />
+    <style>
+        :root{
+            --bg:#f5f7fb;
+            --card:#ffffff;
+            --accent:#0b74de;
+            --muted:#6b7280;
+            --success:#16a34a;
+            --danger:#dc2626;
+            font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+        }
+        html,body{height:100%}
+        body{
+            margin:0;
+            background:linear-gradient(180deg,var(--bg),#eef2f7);
+            color:#0f172a;
+            -webkit-font-smoothing:antialiased;
+            -moz-osx-font-smoothing:grayscale;
+            line-height:1.4;
+        }
+        .container{
+            max-width:900px;
+            margin:32px auto;
+            padding:24px;
+        }
+        header{
+            display:flex;
+            gap:16px;
+            align-items:center;
+            margin-bottom:20px;
+        }
+        .logo{
+            width:64px;
+            height:64px;
+            background:linear-gradient(135deg,var(--accent),#0369a1);
+            border-radius:10px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            color:#fff;
+            font-weight:700;
+            box-shadow:0 6px 18px rgba(11,116,222,0.16);
+            flex:0 0 64px;
+        }
+        h1{margin:0;font-size:1.25rem}
+        p.lead{margin:4px 0 0;color:var(--muted);font-size:0.95rem}
+        .header-actions{margin-left:auto; display:flex; gap:8px; align-items:center}
+        .login-link{text-decoration:none}
+        .btn{
+            display:inline-flex;
+            gap:8px;
+            align-items:center;
+            justify-content:center;
+            padding:10px 14px;
+            border-radius:8px;
+            background:var(--accent);
+            color:#fff;
+            border:0;
+            cursor:pointer;
+            font-weight:600;
+        }
+        .btn.secondary{background:#fff;color:var(--accent);border:1px solid #dbeefe}
+        .card{
+            background:var(--card);
+            padding:18px;
+            border-radius:12px;
+            box-shadow:0 6px 20px rgba(2,6,23,0.06);
+            margin-bottom:16px;
+        }
+        .card h2{margin:0 0 8px;font-size:1.05rem}
+        .version-header{
+            display:flex;
+            gap:12px;
+            align-items:center;
+            margin-bottom:12px;
+        }
+        .version-badge{
+            background:var(--accent);
+            color:#fff;
+            padding:4px 10px;
+            border-radius:6px;
+            font-weight:600;
+            font-size:0.9rem;
+        }
+        .version-date{
+            color:var(--muted);
+            font-size:0.9rem;
+        }
+        .changelog{
+            margin-top:12px;
+        }
+        .changelog ul{
+            margin:0;
+            padding-left:20px;
+            list-style:disc;
+        }
+        .changelog li{
+            margin:4px 0;
+            color:#0f172a;
+        }
+        .changelog .feature{color:var(--success)}
+        .changelog .fix{color:var(--accent)}
+        .changelog .breaking{color:var(--danger)}
+        .muted{color:var(--muted);font-size:0.9rem}
+        footer{margin-top:32px;color:var(--muted);font-size:0.9rem;border-top:1px solid #eef2f7;padding-top:16px}
+        a.link{color:var(--accent);text-decoration:none}
+        @media (max-width:520px){
+            header{flex-direction:column;align-items:flex-start;gap:10px}
+            .header-actions{margin-left:0;width:100%;justify-content:flex-end}
+        }
+    </style>
+</head>
+<body>
+    <main class="container" role="main">
+        <header>
+            <div class="logo" aria-hidden="true">POS</div>
+            <div>
+                <h1>Notas de la versión</h1>
+                <p class="lead">Historial de actualizaciones, mejoras y parches en POS Nómina.</p>
+            </div>
+
+            <nav class="header-actions" aria-label="Acciones de usuario">
+                <a class="login-link" href="../soporte.html" title="Regresar a soporte">
+                    <button class="btn secondary" type="button">Regresar a soporte</button>
+                </a>
+                <a class="login-link" href="../login.html" title="Iniciar sesión">
+                    <button class="btn" type="button">Iniciar sesión</button>
+                </a>
+            </nav>
+        </header>
+
+        <section role="main">
+            <div class="card">
+                <div class="version-header">
+                    <span class="version-badge">v2.4.1</span>
+                    <span class="version-date">26 de noviembre de 2025</span>
+                </div>
+                <p class="muted">Parche de corrección</p>
+                <div class="changelog">
+                    <ul>
+                        <li class="fix">✓ Corregido error en cálculo de deducciones para empleados en período de prueba</li>
+                        <li class="fix">✓ Mejorada la validación de cédulas con números repetidos</li>
+                        <li class="feature">+ Nuevo campo opcional para centro de costo en nóminas</li>
+                        <li class="fix">✓ Resuelto problema de timeout al exportar reportes grandes (>5000 registros)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="version-header">
+                    <span class="version-badge">v2.4.0</span>
+                    <span class="version-date">15 de noviembre de 2025</span>
+                </div>
+                <p class="muted">Versión mayor con nuevas funcionalidades</p>
+                <div class="changelog">
+                    <ul>
+                        <li class="feature">+ Nuevo módulo de análisis y dashboards interactivos</li>
+                        <li class="feature">+ Soporte para múltiples monedas (USD, COP, MXN, ARS)</li>
+                        <li class="feature">+ Integración con sistemas contables (SAP, Xero, QuickBooks)</li>
+                        <li class="feature">+ Autenticación de dos factores (2FA) obligatoria para administradores</li>
+                        <li class="fix">✓ Optimización de rendimiento en consultas de historial</li>
+                        <li class="breaking">⚠ Deprecado: endpoint /api/v1/payroll (usar /api/v2/payroll)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="version-header">
+                    <span class="version-badge">v2.3.2</span>
+                    <span class="version-date">02 de noviembre de 2025</span>
+                </div>
+                <p class="muted">Parche de seguridad</p>
+                <div class="changelog">
+                    <ul>
+                        <li class="fix">✓ Parche de seguridad: SQL Injection en búsqueda de empleados (CVSS 8.2)</li>
+                        <li class="fix">✓ Eliminada exposición de rutas internas en mensajes de error</li>
+                        <li class="fix">✓ Mejorada la encriptación de datos sensibles en tránsito</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="version-header">
+                    <span class="version-badge">v2.3.1</span>
+                    <span class="version-date">18 de octubre de 2025</span>
+                </div>
+                <p class="muted">Mantenimiento</p>
+                <div class="changelog">
+                    <ul>
+                        <li class="fix">✓ Corregido problema en visualización de tildes en reportes PDF</li>
+                        <li class="fix">✓ Resuelto conflicto de zona horaria en sincronización nocturna</li>
+                        <li class="feature">+ Mejora en la interfaz de importación masiva de empleados</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="version-header">
+                    <span class="version-badge">v2.3.0</span>
+                    <span class="version-date">01 de octubre de 2025</span>
+                </div>
+                <p class="muted">Versión mayor con mejoras en UX</p>
+                <div class="changelog">
+                    <ul>
+                        <li class="feature">+ Rediseño completo de interfaz para dispositivos móviles</li>
+                        <li class="feature">+ Nuevo sistema de notificaciones en tiempo real</li>
+                        <li class="feature">+ Temas claro/oscuro disponibles</li>
+                        <li class="fix">✓ Optimización de consultas a base de datos</li>
+                        <li class="fix">✓ Mejorada la accesibilidad (WCAG 2.1 AA)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="version-header">
+                    <span class="version-badge">v2.2.0</span>
+                    <span class="version-date">15 de septiembre de 2025</span>
+                </div>
+                <p class="muted">Lanzamiento inicial público</p>
+                <div class="changelog">
+                    <ul>
+                        <li class="feature">+ Gestión completa de empleados</li>
+                        <li class="feature">+ Procesamiento de nóminas mensuales y quincenales</li>
+                        <li class="feature">+ Reportes y exportación a PDF/Excel</li>
+                        <li class="feature">+ Sistema de auditoría y trazabilidad</li>
+                        <li class="feature">+ Soporte multi-usuario con roles y permisos</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>¿Cómo actualizar?</h2>
+                <p class="muted">Las actualizaciones se instalan automáticamente. Después de actualizar:</p>
+                <ol>
+                    <li>Limpia el caché de tu navegador (Ctrl+Shift+Supr)</li>
+                    <li>Cierra la sesión actual</li>
+                    <li>Inicia sesión nuevamente</li>
+                    <li>Verifica que los cambios se hayan aplicado correctamente</li>
+                </ol>
+                <p class="muted" style="margin-top:12px"><strong>Nota:</strong> No se pierden datos durante las actualizaciones. Todos tus registros de empleados y nóminas se preservan.</p>
+            </div>
+        </section>
+
+        <footer>
+            <p>© 2025 POS Nómina. Todos los derechos reservados. | <a class="link" href="../soporte.html">Volver a soporte</a></p>
+        </footer>
+    </main>
+</body>
+</html>

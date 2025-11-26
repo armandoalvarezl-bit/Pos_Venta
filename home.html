@@ -1,0 +1,735 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>POS IFOBE — Punto de Venta</title>
+  <link rel="alternate" href="atom.xml" type="application/atom+xml" title="Atom">
+  
+  <!-- Librerías para exportar PDF (una sola vez, antes del script final) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script> 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  
+    <link rel="stylesheet" href="style.css" />
+
+</head>
+<body>
+   <div class="header" style="
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:12px 20px;
+    background:#ffffff;
+    border-bottom:2px solid #f0f0f0;
+">
+    <!-- LOGO + TÍTULO -->
+    <div style="display:flex; align-items:center;">
+        <img src="img/logo.png" alt="Logo IFOBE" 
+             style="height:48px; margin-right:12px; filter:drop-shadow(0 1px 2px rgba(0,0,0,0.2));" />
+
+        <div style="display:flex; flex-direction:column; line-height:1.2;">
+            <span style="font-weight:800; font-size:20px; color:#222;">IFOBE</span>
+            <span style="font-size:14px; color:var(--accent); font-weight:600;">Punto de Venta</span>
+        </div>
+    </div>
+
+    <!-- MENÚ DE OPCIONES -->
+    <div style="display:flex; gap:20px; align-items:center;">
+
+        <a href="login.html" style="
+            font-size:15px; 
+            font-weight:600; 
+            color:#d32222; 
+            text-decoration:none;
+        ">
+            Cerrar sesión
+        </a>
+    </div>
+</div>
+
+  <div class="wrap">
+    <!-- LEFT: Form -->
+    <div class="card">
+      <h1>POS — IFOBE (navegador)</h1>
+      <p class="hint">Completa los datos y genera la factura. Las facturas se guardan en tu navegador (localStorage) y no se modifica tu PDF original subido al sistema.</p>
+
+      <div style="margin-top:12px">
+        <div class="grid-2">
+          <div>
+            <label>Número de factura</label>
+            <input id="invoice-number" type="text" readonly />            
+          </div>
+          <div>
+            <label>Fecha</label>
+            <input id="invoice-date" type="text" />
+          </div>
+          
+        </div>
+
+        <h3 style="margin:14px 0 6px">Datos del cliente</h3>
+        <div>
+          <label>Nombre o Razón Social</label>
+          <input id="client-name" type="text" placeholder="Nombre completo o razón social" />
+        </div>
+        <div class="grid-2" style="margin-top:8px">
+          <div>
+            <label>Tipo de documento</label>
+            <select id="client-doc-type">
+              <option value="CC">CC</option>
+              <option value="NIT">NIT</option>
+              <option value="CE">CE</option>
+            </select>
+          </div>
+          <div>
+            <label>Número de documento</label>
+            <input id="client-doc-number" type="text" />
+          </div>
+        </div>
+        <div style="margin-top:8px">
+          <label>Dirección</label>
+          <input id="client-address" type="text" />
+        </div>
+        <div style="margin-top:8px">
+          <label>Teléfono / Correo</label>
+          <input id="client-contact" type="text" />
+        </div>
+
+        <h3 style="margin:14px 0 6px">Agregar servicio / ítem</h3>
+        <div class="grid-2">
+          <div>
+            <label>Descripción</label>
+            <input id="item-desc" type="text" placeholder="Capacitación / Mantenimiento / Consultoría..." />
+          </div>
+          <div>
+            <label>Cantidad</label>
+            <input id="item-qty" type="number" min="1" value="1" />
+          </div>
+        </div>
+        <div class="grid-2" style="margin-top:8px">
+          <div>
+            <label>Valor unitario</label>
+            <input id="item-unit" type="number" min="0" value="0" />
+          </div>
+          <div style="display:flex; flex-direction:column;">
+            <label>&nbsp;</label>
+            <div style="display:flex; gap:8px;">
+              <button id="add-item" class="btn-ghost small">Agregar</button>
+              <button id="clear-items" class="small">Limpiar ítems</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:12px">
+          <table id="items-table" aria-live="polite">
+            <thead>
+              <tr><th>Cant.</th><th>Descripción</th><th class="right">V. Unitario</th><th class="right">Total</th><th></th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+
+          <div style="margin-top:10px; display:grid; grid-template-columns:1fr 160px; gap:10px; align-items:end">
+            <div>
+              <label>Forma de pago</label>
+              <select id="payment-method">
+                <option>Efectivo</option>
+                <option>Transferencia Bancaria</option>
+                <option>Consignación</option>
+                <option>Otro</option>
+              </select>
+              <div style="margin-top:8px">
+                <label>Banco / Observación</label>
+                <input id="bank-info" type="text" placeholder="Nequi / Bancolombia / Observaciones" />
+              </div>
+            </div>
+            <div style="background:#fbfcff; padding:10px; border-radius:8px; border:1px solid #eef5ff">
+              <table style="width:100%">
+                <tr><td class="muted">Subtotal</td><td class="right" id="subtotal-text">$0</td></tr>
+                <tr><td class="muted">IVA</td>
+                    <td class="right">
+                      <select id="iva-select" style="padding:6px; border-radius:6px; border:1px solid #e6eef8">
+                        <option value="0">0%</option>
+                        <option value="19" selected>19%</option>
+                      </select>
+                    </td>
+                </tr>
+                <tr class="total-row"><td>Total a Pagar</td><td class="right" id="total-text">$0</td></tr>
+              </table>
+            </div>
+          </div>
+
+          <div class="actions no-print">
+            <button id="save-invoice" class="btn-primary">Guardar factura</button>
+            <button id="export-pdf" class="btn-ghost">Exportar a PDF</button>
+            <button id="print-receipt" class="btn-ghost">Imprimir</button>
+            <button id="view-history" class="btn-ghost">Historial</button>
+            <button id="reset-all" class="small">Reset local</button>
+          </div>
+        </div>
+
+        <footer class="note">Nota: las facturas se almacenan localmente en tu navegador. No se modifica ningún archivo PDF que cargaste externamente.</footer>
+      </div>
+    </div>
+
+    <!-- RIGHT: Vista recibo -->
+    <div class="card">
+      <h3 style="margin:0 0 12px">Vista de recibo (imprimible)</h3>
+
+      <div id="receipt-area" class="receipt" role="document" aria-label="Recibo">
+        <div id="receipt">
+          <div class="invoice-header">         
+        <div style="display:flex; gap:12px; align-items:center;">
+          <div style="flex:1; display:flex; align-items:center;">
+            <div class="logo-placeholder" style="width:50px; height:50px; overflow:hidden; border-radius:50%; border:2px solid #ccc; display:inline-block; vertical-align:middle;">
+             <img src="img/logo.png" alt="IFOBE" style="width:100%; height:100%; object-fit:cover;" />
+            </div>
+            <span style="margin-left:10px; font-weight:bold; font-size:1.2em;"></span>
+        </div>
+
+        </div>
+
+            <div style="text-align:right; max-width:240px;">
+              <div class="company">INSTITUTO DE FORMACIÓN EN OFIMÁTICA BÁSICA Y EMPRESARIAL S.A.S. – IFOBE</div>
+              <div class="muted">NIT: 901.753.803</div>
+              <div class="muted">Caucasia, Antioquia, Colombia</div>
+              <div class="muted">Tel: 3127947484 — info@gen10ifobe.com</div>
+              <div style="margin-top:8px"><strong id="r-invoice-number">FACTURA No. IFOBE-2025-1003-001</strong></div>
+            </div>
+          </div>
+
+          <hr style="border:none; border-top:1px dashed #eef3fb; margin:12px 0" />
+
+          <div style="display:flex; gap:12px; justify-content:space-between; align-items:flex-start">
+            <div style="flex:1">
+              <div class="muted">Datos del cliente</div>
+              <div><strong id="r-client-name">-</strong></div>
+              <div class="muted" id="r-client-doc">CC: -</div>
+              <div class="muted" id="r-client-address">Dirección: -</div>
+              <div class="muted" id="r-client-contact">Tel/Correo: -</div>
+            </div>
+            <div style="width:160px">
+              <div class="muted">Fecha de emisión</div>
+              <div id="r-date">-</div>
+              <div style="margin-top:8px" class="muted">Fecha vencimiento</div>
+              <div id="r-due">__ /___ /___</div>
+              <div style="margin: 8px;" class="muted">Hora</div>
+              <div id="r-time">__ : __ </div>
+            </div>
+          </div>
+          
+          <div style="margin-top:12px">
+            <table style="width:100%">
+              <thead>
+                <tr><th style="width:50px">Cant.</th><th>Descripción</th><th class="right" style="width:90px">V. Unitario</th><th class="right" style="width:90px">Total</th></tr>
+              </thead>
+              <tbody id="r-items"></tbody>
+            </table>
+          </div>
+
+          <div style="margin-top:12px; display:flex; justify-content:flex-end">
+            <div style="width:320px; background:#fbfcff; padding:10px; border-radius:8px; border:1px solid #eef5ff">
+              <div style="display:flex; justify-content:space-between"><div class="muted">Subtotal</div><div id="r-subtotal" class="right">$0</div></div>
+              <div style="display:flex; justify-content:space-between"><div class="muted">IVA</div><div id="r-iva" class="right">$0</div></div>
+              <hr style="border:none; border-top:1px dashed #eef3fb; margin:8px 0" />
+              <div style="display:flex; justify-content:space-between; font-weight:700"><div>Total a Pagar</div><div id="r-total" class="right">$0</div></div>
+            </div>
+          </div>
+
+          <div style="margin-top:14px">
+            <div class="muted">Forma de pago</div>
+            <div id="r-payment">-</div>
+            <div class="muted" style="margin-top:8px">Datos del expedidor</div>
+            <div>Elaboró: Armando Alvarez</div>
+            <div style="margin-top:8px" class="muted">Notas legales</div>
+            <div style="font-size:12px; color:#555; margin-top:6px">
+              Esta factura se expide conforme a lo establecido en los artículos 615 y siguientes del Estatuto Tributario Colombiano.
+              En caso de devolución o reclamo, debe presentarse dentro de los cinco (5) días hábiles siguientes a la fecha de emisión.
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal historial -->
+  <div id="modal-history" class="modal" role="dialog" aria-modal="true">
+    <div class="card">
+      <h2>Historial de facturas</h2>
+      <div id="history-list" style="margin-top:12px"></div>
+      <div style="margin-top:12px; display:flex; gap:8px;">
+        <button id="close-history" class="btn-ghost">Cerrar</button>
+        <button id="clear-history" class="small">Borrar historial</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+/*
+  POS en navegador — todo local
+  NOTA: Este código NO modifica tu PDF subido. Solo genera facturas locales y PDF desde la vista HTML.
+*/
+
+(function(){
+  // Helpers
+  const $ = (id)=>document.getElementById(id);
+  const fmt = n=> n.toLocaleString('es-CO',{minimumFractionDigits:0, maximumFractionDigits:0});
+  const money = v => '$' + fmt(Math.round(v));
+
+  // Elements
+  const invoiceNumberEl = $('invoice-number');
+  const invoiceDateEl = $('invoice-date');
+  const clientName = $('client-name');
+  const clientDocType = $('client-doc-type');
+  const clientDocNumber = $('client-doc-number');
+  const clientAddress = $('client-address');
+  const clientContact = $('client-contact');
+  const itemDesc = $('item-desc');
+  const itemQty = $('item-qty');
+  const itemUnit = $('item-unit');
+  const addItemBtn = $('add-item');
+  const clearItemsBtn = $('clear-items');
+  const itemsTableBody = document.querySelector('#items-table tbody');
+  const subtotalText = $('subtotal-text');
+  const totalText = $('total-text');
+  const ivaSelect = $('iva-select');
+  const paymentMethod = $('payment-method');
+  const bankInfo = $('bank-info');
+  const saveInvoiceBtn = $('save-invoice');
+  const exportPdfBtn = $('export-pdf');
+  const printBtn = $('print-receipt');
+  const viewHistoryBtn = $('view-history');
+  const modalHistory = $('modal-history');
+  const historyList = $('history-list');
+  const closeHistoryBtn = $('close-history');
+  const clearHistoryBtn = $('clear-history');
+  const resetAll = $('reset-all');
+
+  // Receipt elements
+  const rInvoiceNumber = $('r-invoice-number');
+  const rClientName = $('r-client-name');
+  const rClientDoc = $('r-client-doc');
+  const rClientAddress = $('r-client-address');
+  const rClientContact = $('r-client-contact');
+  const rDate = $('r-date');
+  const rDue = $('r-due');
+  const rItems = $('r-items');
+  const rSubtotal = $('r-subtotal');
+  const rIva = $('r-iva');
+  const rTotal = $('r-total');
+  const rPayment = $('r-payment');
+
+  // State
+  let items = [];
+
+  // Invoice sequence in localStorage
+  const STORAGE_KEY_SEQ = 'ifobe_invoice_seq_v1';
+  const STORAGE_KEY_INVOICES = 'ifobe_invoices_v1';
+
+  function nextInvoiceNumber(){
+    let seq = parseInt(localStorage.getItem(STORAGE_KEY_SEQ) || '1', 10);
+    const padded = String(seq).padStart(3, '0'); // e.g., 001
+    const num = `IFOBE-2025-1003-${padded}`;
+    // increment for next use but only save when user actually saves invoice
+    return { num, seq };
+  }
+
+  function increaseSeq(){
+    let seq = parseInt(localStorage.getItem(STORAGE_KEY_SEQ) || '1', 10);
+    seq = seq + 1;
+    localStorage.setItem(STORAGE_KEY_SEQ, String(seq));
+  }
+
+  function setInitialDate(){
+    const d = new Date();
+    const dd = String(d.getDate()).padStart(2,'0');
+    const mm = String(d.getMonth()+1).padStart(2,'0');
+    const yyyy = d.getFullYear();
+    invoiceDateEl.value = `${dd}/${mm}/${yyyy}`;
+  }
+
+  function refreshInvoiceNumberUI(){
+    const { num } = nextInvoiceNumber();
+    invoiceNumberEl.value = num;
+    rInvoiceNumber.innerText = 'FACTURA No. ' + num;
+  }
+
+  function renderItems(){
+    itemsTableBody.innerHTML = '';
+    rItems.innerHTML = '';
+    let subtotal = 0;
+    items.forEach((it, idx)=>{
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${it.qty}</td>
+        <td>${it.desc}</td>
+        <td class="right">${money(it.unit)}</td>
+        <td class="right">${money(it.qty * it.unit)}</td>
+      `;
+      // remove button
+      const tdRemove = document.createElement('td');
+      tdRemove.style.width = '40px';
+      tdRemove.innerHTML = '<button data-idx="'+idx+'" style="background:transparent;border:0;color:#c33;cursor:pointer">✖</button>';
+      tr.appendChild(tdRemove);
+      itemsTableBody.appendChild(tr);
+
+      // receipt row
+      const row = document.createElement('tr');
+      row.innerHTML = `<td>${it.qty}</td><td>${it.desc}</td><td class="right">${money(it.unit)}</td><td class="right">${money(it.qty * it.unit)}</td>`;
+      rItems.appendChild(row);
+
+      subtotal += it.qty * it.unit;
+    });
+
+    // attach remove handlers
+    itemsTableBody.querySelectorAll('button[data-idx]').forEach(btn=>{
+      btn.addEventListener('click', (e)=>{
+        const i = parseInt(btn.getAttribute('data-idx'),10);
+        items.splice(i,1);
+        renderItems();
+        updateTotals();
+      });
+    });
+
+    subtotalText.innerText = money(subtotal);
+    rSubtotal.innerText = money(subtotal);
+
+    updateTotals();
+  }
+
+  function updateTotals(){
+    let subtotal = items.reduce((s,it)=> s + (it.qty * it.unit), 0);
+    const ivaPct = parseFloat(ivaSelect.value) || 0;
+    let ivaVal = Math.round(subtotal * ivaPct / 100);
+    let total = Math.round(subtotal + ivaVal);
+    subtotalText.innerText = money(subtotal);
+    totalText.innerText = money(total);
+    rSubtotal.innerText = money(subtotal);
+    rIva.innerText = money(ivaVal);
+    rTotal.innerText = money(total);
+    rPayment.innerText = `${paymentMethod.value} — ${bankInfo.value || ''}`;
+  }
+
+  // events
+  addItemBtn.addEventListener('click', ()=>{
+    const desc = itemDesc.value.trim();
+    const qty = parseInt(itemQty.value,10) || 1;
+    const unit = parseFloat(itemUnit.value) || 0;
+    if(!desc) return alert('Agrega una descripción del servicio.');
+    items.push({ desc, qty, unit });
+    itemDesc.value = ''; itemQty.value = 1; itemUnit.value = 0;
+    renderItems();
+    updateTotals();
+  });
+
+  clearItemsBtn.addEventListener('click', ()=>{
+    if(!confirm('Limpiar todos los ítems de la factura?')) return;
+    items = [];
+    renderItems();
+    updateTotals();
+  });
+
+  ivaSelect.addEventListener('change', updateTotals);
+  paymentMethod.addEventListener('change', updateTotals);
+  bankInfo.addEventListener('input', updateTotals);
+
+  // Save invoice (persist)
+  saveInvoiceBtn.addEventListener('click', ()=>{
+    if(!clientName.value.trim()) return alert('Ingresa el nombre del cliente.');
+    if(items.length === 0) return alert('Agrega al menos un ítem.');
+    const { num, seq } = nextInvoiceNumber();
+    const invoice = {
+      number: num,
+      seq,
+      date: invoiceDateEl.value,
+      client: {
+        name: clientName.value,
+        docType: clientDocType.value,
+        docNumber: clientDocNumber.value,
+        address: clientAddress.value,
+        contact: clientContact.value
+      },
+      items: items.slice(),
+      ivaPct: parseFloat(ivaSelect.value) || 0,
+      paymentMethod: paymentMethod.value,
+      bankInfo: bankInfo.value,
+      createdAt: new Date().toISOString()
+    };
+    // save
+    const arr = JSON.parse(localStorage.getItem(STORAGE_KEY_INVOICES) || '[]');
+    arr.push(invoice);
+    localStorage.setItem(STORAGE_KEY_INVOICES, JSON.stringify(arr));
+    // increase seq now that invoice is saved
+    increaseSeq();
+
+    alert('Factura guardada localmente: ' + num);
+    refreshInvoiceNumberUI();
+    renderHistoryList();
+  });
+
+  // Export PDF (using html2canvas + jsPDF) — captura SOLO #receipt y escala a carta
+ exportPdfBtn.addEventListener("click", async () => {
+  if (items.length === 0) {
+    alert("Agrega al menos un ítem para exportar.");
+    return;
+  }
+
+  // Actualizar vista antes de exportar
+  populateReceiptFromForm();
+
+  const receiptEl = document.querySelector("#receipt");
+
+  try {
+    // Renderizamos el bloque #receipt
+    const canvas = await html2canvas(receiptEl, {
+      scale: 3, // más nitidez
+      backgroundColor: "#ffffff",
+      useCORS: true
+    });
+
+    const imgData = canvas.toDataURL("image/png");
+    const { jsPDF } = window.jspdf;
+
+    const pdf = new jsPDF({
+      orientation: "portrait",
+      unit: "px",
+      format: "letter"
+    });
+
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    const margin = 20; // px
+
+    let imgWidth = canvas.width;
+    let imgHeight = canvas.height;
+
+    // Escalar imagen si es más ancha que la página
+    const scaleFactor = Math.min(1, (pageWidth - margin * 2) / imgWidth);
+    imgWidth *= scaleFactor;
+    imgHeight *= scaleFactor;
+
+    let position = margin;
+    let remainingHeight = imgHeight;
+    const pageInnerHeight = pageHeight - margin * 2;
+
+    let sourceY = 0;
+
+    // Dividir contenido en varias páginas si es necesario
+    while (remainingHeight > 0) {
+      const chunkHeight = Math.min(remainingHeight, pageInnerHeight);
+      const canvasChunk = document.createElement("canvas");
+      canvasChunk.width = canvas.width;
+      canvasChunk.height = (canvas.height * chunkHeight) / imgHeight;
+
+      const ctx = canvasChunk.getContext("2d");
+      ctx.drawImage(
+        canvas,
+        0,
+        sourceY,
+        canvas.width,
+        canvasChunk.height,
+        0,
+        0,
+        canvas.width,
+        canvasChunk.height
+      );
+
+      const imgChunkData = canvasChunk.toDataURL("image/png");
+
+      // Centrar horizontalmente
+      const posX = (pageWidth - imgWidth) / 2;
+
+      pdf.addImage(imgChunkData, "PNG", posX, position, imgWidth, chunkHeight);
+
+      remainingHeight -= chunkHeight;
+      sourceY += chunkHeight;
+
+      if (remainingHeight > 0) {
+        pdf.addPage();
+      }
+    }
+
+    const invoiceNumber = document.getElementById("invoice-number")?.value || "factura";
+    const invoiceDate = document.getElementById("invoice-date")?.value || "";
+    const fileName = `${invoiceNumber}${invoiceDate ? "_" + invoiceDate : ""}.pdf`;
+
+    pdf.save(fileName);
+
+  } catch (err) {
+    console.error(err);
+    alert("Error al generar PDF: " + (err && err.message));
+  }
+});
+
+
+
+  // Print
+  printBtn.addEventListener('click', ()=>{
+    if(items.length === 0) return alert('Agrega al menos un ítem para imprimir.');
+    populateReceiptFromForm();
+    window.print();
+  });
+
+  // History modal
+  viewHistoryBtn.addEventListener('click', ()=>{
+    renderHistoryList();
+    modalHistory.classList.add('open');
+  });
+  closeHistoryBtn.addEventListener('click', ()=> modalHistory.classList.remove('open'));
+
+  clearHistoryBtn.addEventListener('click', ()=>{
+    if(confirm('Borrar todo el historial de facturas guardadas localmente?')) {
+      localStorage.removeItem(STORAGE_KEY_INVOICES);
+      renderHistoryList();
+    }
+  });
+
+  resetAll.addEventListener('click', ()=>{
+    if(confirm('Resetear secuencia y facturas locales? Esto borrará todo.')) {
+      localStorage.removeItem(STORAGE_KEY_INVOICES);
+      localStorage.removeItem(STORAGE_KEY_SEQ);
+      location.reload();
+    }
+  });
+
+  function renderHistoryList(){
+    const arr = JSON.parse(localStorage.getItem(STORAGE_KEY_INVOICES) || '[]').slice().reverse();
+    historyList.innerHTML = '';
+    if(arr.length === 0) {
+      historyList.innerHTML = '<p class="muted">No hay facturas guardadas.</p>';
+      return;
+    }
+    const ul = document.createElement('div');
+    ul.style.display = 'grid';
+    ul.style.gap = '8px';
+    arr.forEach((inv, i)=>{
+      const card = document.createElement('div');
+      card.style.padding = '8px';
+      card.style.border = '1px solid #eef5ff';
+      card.style.borderRadius = '8px';
+      card.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center">
+          <div>
+            <div style="font-weight:700">${inv.number}</div>
+            <div class="muted">${inv.client.name} — ${inv.client.docType}: ${inv.client.docNumber}</div>
+            <div class="muted">Fecha: ${inv.date || '-'}</div>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center">
+            <button data-idx="${i}" class="small view-btn">Ver</button>
+            <button data-idx="${i}" class="small export-btn">Exportar PDF</button>
+            <button data-idx="${i}" class="small delete-btn">Borrar</button>
+          </div>
+        </div>
+      `;
+      ul.appendChild(card);
+    });
+    historyList.appendChild(ul);
+
+    // attach handlers
+    historyList.querySelectorAll('.view-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const i = parseInt(btn.getAttribute('data-idx'),10);
+        const arr = JSON.parse(localStorage.getItem(STORAGE_KEY_INVOICES) || '[]').reverse();
+        const inv = arr[i];
+        // populate UI with invoice
+        populateFormFromInvoice(inv);
+        modalHistory.classList.remove('open');
+      });
+    });
+    historyList.querySelectorAll('.delete-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        if(!confirm('Borrar esta factura?')) return;
+        const idx = parseInt(btn.getAttribute('data-idx'),10);
+        const arr = JSON.parse(localStorage.getItem(STORAGE_KEY_INVOICES) || '[]').reverse();
+        arr.splice(idx,1);
+        // reverse back to original order and save
+        localStorage.setItem(STORAGE_KEY_INVOICES, JSON.stringify(arr.reverse()));
+        renderHistoryList();
+      });
+    });
+    historyList.querySelectorAll('.export-btn').forEach(btn=>{
+      btn.addEventListener('click', async ()=>{
+        const i = parseInt(btn.getAttribute('data-idx'),10);
+        const arr = JSON.parse(localStorage.getItem(STORAGE_KEY_INVOICES) || '[]').reverse();
+        const inv = arr[i];
+        // render invoice into receipt area, then export
+        populateReceiptFromInvoice(inv);
+        // use html2canvas as above (scale to letter)
+        try{
+          const canvas = await html2canvas(document.getElementById('receipt'), { scale:2, useCORS:true, backgroundColor:'#ffffff' });
+          const imgData = canvas.toDataURL('image/png');
+          const { jsPDF } = window.jspdf;
+          const pdf = new jsPDF({ orientation:'portrait', unit:'px', format:'letter' });
+          const pageWidth = pdf.internal.pageSize.getWidth();
+          const imgWidth = canvas.width;
+          const imgHeight = canvas.height;
+          const margin = 20;
+          const maxWidth = pageWidth - margin * 2;
+          const scaleFactor = Math.min(1, maxWidth / imgWidth);
+          const newWidth = imgWidth * scaleFactor;
+          const newHeight = imgHeight * scaleFactor;
+          const posX = (pageWidth - newWidth) / 2;
+          const posY = 40;
+          pdf.addImage(imgData, 'PNG', posX, posY, newWidth, newHeight);
+          pdf.save(inv.number + '.pdf');
+        } catch(e){
+          alert('Error exportando: ' + e.message);
+        }
+      });
+    });
+  }
+
+  // Populate receipt view from current form
+  function populateReceiptFromForm(){
+    rInvoiceNumber.innerText = 'FACTURA No. ' + (invoiceNumberEl.value || '');
+    rClientName.innerText = clientName.value || '-';
+    rClientDoc.innerText = clientDocType.value + ': ' + (clientDocNumber.value || '-');
+    rClientAddress.innerText = (clientAddress.value || '-');
+    rClientContact.innerText = clientContact.value || '-';
+    rDate.innerText = invoiceDateEl.value || '-';
+    // due date: by default same date
+    rDue.innerText = invoiceDateEl.value || '-';
+    // items are already rendered in r-items by renderItems()
+    updateTotals();
+  }
+
+  // Populate receipt from saved invoice (history)
+  function populateReceiptFromInvoice(inv){
+    // fill form fields as well
+    invoiceNumberEl.value = inv.number;
+    invoiceDateEl.value = inv.date || invoiceDateEl.value;
+    clientName.value = inv.client.name;
+    clientDocType.value = inv.client.docType;
+    clientDocNumber.value = inv.client.docNumber;
+    clientAddress.value = inv.client.address;
+    clientContact.value = inv.client.contact;
+    items = inv.items.map(it => ({ desc: it.desc, qty: it.qty, unit: it.unit }));
+    ivaSelect.value = inv.ivaPct;
+    paymentMethod.value = inv.paymentMethod;
+    bankInfo.value = inv.bankInfo || '';
+    renderItems();
+    populateReceiptFromForm();
+  }
+
+  function populateFormFromInvoice(inv){
+    populateReceiptFromInvoice(inv);
+  }
+
+  // On load
+  setInitialDate();
+  refreshInvoiceNumberUI();
+
+  // For demonstration, if no seq in storage, set to 1 (so first saved invoice is 001)
+  if(!localStorage.getItem(STORAGE_KEY_SEQ)){
+    localStorage.setItem(STORAGE_KEY_SEQ, '1');
+  }
+
+  // ensure receipt initially empty
+  renderItems();
+
+
+})();
+</script>
+
+</body>
+</html>

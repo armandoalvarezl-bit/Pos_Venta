@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Guía de usuaria — Pos Nómina</title>
+    <style>
+        :root{font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;line-height:1.4;color:#111;background:#fff}
+        body{max-width:900px;margin:2rem auto;padding:1rem}
+        header h1{margin:0 0 .25rem;font-size:1.6rem}
+        header p{margin:.25rem 0 .75rem;color:#444}
+        nav ul{display:flex;flex-wrap:wrap;gap:.5rem;padding:0;margin:0 0 1rem;list-style:none}
+        nav a{padding:.35rem .6rem;background:#f0f0f0;border-radius:6px;text-decoration:none;color:#111}
+        section{margin:1rem 0;padding:1rem;border:1px solid #eee;border-radius:8px;background:#fafafa}
+        h2{margin:.25rem 0 .5rem}
+        ol,ul{margin:.25rem 0 0 1.2rem}
+        pre{background:#111;color:#fff;padding:.75rem;overflow:auto;border-radius:6px}
+        footer{font-size:.85rem;color:#666;margin-top:1rem}
+        .kbd{background:#222;color:#fff;padding:.08rem .35rem;border-radius:4px;font-family:monospace;font-size:.9em}
+        .btn-group{display:flex;gap:1rem;margin-top:2rem;justify-content:center}
+        .btn{padding:.75rem 1.5rem;border:none;border-radius:8px;font-size:1rem;cursor:pointer;text-decoration:none;transition:all .3s ease;font-weight:600}
+        .btn-login{background:#0066cc;color:#fff}
+        .btn-login:hover{background:#0052a3;transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,102,204,.3)}
+        .btn-support{background:#28a745;color:#fff}
+        .btn-support:hover{background:#218838;transform:translateY(-2px);box-shadow:0 4px 12px rgba(40,167,69,.3)}
+        </style>
+    </head>
+    <body>
+        <header>
+        <h1>Guía de instalación — POS Nómina</h1>
+        <p>Instrucciones paso a paso para instalar la aplicación en servidores Windows o Linux.</p>
+        <p style="margin-top:12px">
+            <span style="display:inline-flex;gap:12px;align-items:center;flex-wrap:wrap">
+                <a href="soporte.html"
+                   title="Regresar a la sección de soporte"
+                   aria-label="Regresar a soporte"
+                   role="button"
+                   style="background:#ffffff;color:#0b5394;padding:10px 14px;border-radius:8px;text-decoration:none;font-weight:700;box-shadow:0 6px 18px rgba(11,83,148,0.12);border:1px solid rgba(11,83,148,0.06);">
+                    Regresar a soporte
+                </a>
+
+                <a href="login.html"
+                   title="Ir a la pantalla de inicio de sesión"
+                   aria-label="Ir a inicio de sesión"
+                   role="button"
+                   style="background:transparent;color:#ffffff;padding:10px 14px;border-radius:8px;text-decoration:none;font-weight:700;border:2px solid rgba(255,255,255,0.18);">
+                    Iniciar sesión
+                </a>
+
+                <span style="color:rgba(255,255,255,0.95);font-size:0.95rem;margin-left:6px">
+                    ¿Necesitas algo más? Visita soporte o inicia sesión.
+                </span>
+            </span>
+        </p>
+    </header>
+        <nav aria-label="Índice">
+        <ul>
+            <li><a href="#inicio">Inicio rápido</a></li>
+            <li><a href="#acceso">Acceso y seguridad</a></li>
+            <li><a href="#navegacion">Navegación</a></li>
+            <li><a href="#funcionalidades">Funcionalidades</a></li>
+            <li><a href="#problemas">Problemas frecuentes</a></li>
+            <li><a href="#soporte">Soporte</a></li>
+        </ul>
+        </nav>
+
+        <section id="inicio" aria-labelledby="titulo-inicio">
+        <h2 id="titulo-inicio">Inicio rápido</h2>
+        <ol>
+            <li>Abrir el navegador y acceder a la URL proporcionada por su administrador.</li>
+            <li>En la pantalla de ingreso, introducir usuario y contraseña. Si es la primera vez, use la contraseña temporal que le entregaron.</li>
+            <li>Complete el proceso de cambio de contraseña si se solicita.</li>
+            <li>Revise el tablero principal (panel) para ver alertas y tareas pendientes.</li>
+        </ol>
+        </section>
+
+    <section id="acceso" aria-labelledby="titulo-acceso">
+        <h2 id="titulo-acceso">Acceso y seguridad</h2>
+        <ul>
+            <li>No comparta sus credenciales.</li>
+            <li>Use una contraseña segura y actualícela periódicamente.</li>
+            <li>Si olvida su contraseña: seleccione "¿Olvidó su contraseña?" y siga las instrucciones de recuperación.</li>
+            <li>Habilite la autenticación de dos factores si la opción está disponible.</li>
+        </ul>
+    </section>
+
+    <section id="navegacion" aria-labelledby="titulo-navegacion">
+        <h2 id="titulo-navegacion">Navegación básica</h2>
+        <p>Elementos principales:</p>
+        <ul>
+            <li>Menú lateral: acceso a módulos (Empleados, Nóminas, Reportes, Configuración).</li>
+            <li>Barra superior: búsqueda, notificaciones y acceso al perfil.</li>
+            <li>Panel principal: resumen y accesos rápidos.</li>
+        </ul>
+        <p>Atajos útiles:</p>
+        <ul>
+            <li>Buscar: <span class="kbd">/</span></li>
+            <li>Ir al panel: <span class="kbd">g p</span> (si está habilitado)</li>
+        </ul>
+    </section>
+
+    <section id="funcionalidades" aria-labelledby="titulo-funcionalidades">
+        <h2 id="titulo-funcionalidades">Principales funcionalidades</h2>
+        <h3>Gestión de empleados</h3>
+        <ol>
+            <li>Agregar nuevo empleado: Navegar a Empleados → Nuevo.</li>
+            <li>Completar datos personales, laborales y bancarios.</li>
+            <li>Guardar y verificar que el empleado aparezca en la lista.</li>
+        </ol>
+
+        <h3>Procesar nómina</h3>
+        <ol>
+            <li>Ir a Nóminas → Nueva nómina.</li>
+            <li>Seleccionar periodo, tipo de pago y los empleados incluidos.</li>
+            <li>Calcular, revisar previsualización y aprobar para generar pagos.</li>
+        </ol>
+
+        <h3>Reportes</h3>
+        <ul>
+            <li>Generar reportes por periodo, centro de costo o tipo de pago.</li>
+            <li>Exportar a PDF o CSV según necesidad.</li>
+        </ul>
+    </section>
+
+    <section id="problemas" aria-labelledby="titulo-problemas">
+        <h2 id="titulo-problemas">Problemas frecuentes y soluciones</h2>
+        <ul>
+            <li>No puedo iniciar sesión: Verifique usuario/contraseña y estado de la cuenta. Solicite restablecimiento si es necesario.</li>
+            <li>Datos incorrectos en nómina: Revise la ficha del empleado y las reglas salariales; rehacer cálculo si corresponde.</li>
+            <li>Errores de exportación: Asegúrese de tener permisos y espacio suficiente en su equipo.</li>
+            <li>Variables faltantes en reportes: Compruebe que los campos obligatorios están completos en fichas relacionadas.</li>
+        </ul>
+    </section>
+
+    <section id="soporte" aria-labelledby="titulo-soporte">
+        <h2 id="titulo-soporte">Contacto y soporte</h2>
+        <p>Si necesita ayuda, provea:</p>
+        <ol>
+            <li>Descripción breve del problema.</li>
+            <li>Pasos para replicarlo.</li>
+            <li>Capturas de pantalla y hora aproximada.</li>
+            <li>Versión del sistema (si aplica).</li>
+        </ol>
+        <p>Contacto: soporte@suempresa.example (reemplazar por el email real).</p>
+    </section>
+
+    <footer>
+        <p>Versión: 1.0 • Fecha: 2025-11-26 • Manténgase atenta a actualizaciones desde el área de TI.</p>
+    </footer>
+</body>
+</html>

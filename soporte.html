@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Soporte - POS Nómina</title>
+    <meta name="description" content="Página de soporte técnico para POS Nómina. Encuentra ayuda, documentación y envía un ticket." />
+    <style>
+        :root{
+            --bg:#f5f7fb;
+            --card:#ffffff;
+            --accent:#0b74de;
+            --muted:#6b7280;
+            --success:#16a34a;
+            --danger:#dc2626;
+            font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+        }
+        html,body{height:100%}
+        body{
+            margin:0;
+            background:linear-gradient(180deg,var(--bg),#eef2f7);
+            color:#0f172a;
+            -webkit-font-smoothing:antialiased;
+            -moz-osx-font-smoothing:grayscale;
+            line-height:1.4;
+        }
+        .container{
+            max-width:1100px;
+            margin:32px auto;
+            padding:24px;
+        }
+        header{
+            display:flex;
+            gap:16px;
+            align-items:center;
+            margin-bottom:20px;
+        }
+        .logo{
+            width:64px;
+            height:64px;
+            background:linear-gradient(135deg,var(--accent),#0369a1);
+            border-radius:10px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            color:#fff;
+            font-weight:700;
+            box-shadow:0 6px 18px rgba(11,116,222,0.16);
+            flex:0 0 64px;
+        }
+        h1{margin:0;font-size:1.25rem}
+        p.lead{margin:4px 0 0;color:var(--muted);font-size:0.95rem}
+        .header-actions{margin-left:auto; display:flex; gap:8px; align-items:center}
+        .login-link{text-decoration:none}
+        .btn{
+            display:inline-flex;
+            gap:8px;
+            align-items:center;
+            justify-content:center;
+            padding:10px 14px;
+            border-radius:8px;
+            background:var(--accent);
+            color:#fff;
+            border:0;
+            cursor:pointer;
+            font-weight:600;
+        }
+        .btn.secondary{background:#fff;color:var(--accent);border:1px solid #dbeefe}
+        .grid{
+            display:grid;
+            grid-template-columns:1fr 360px;
+            gap:20px;
+            margin-top:20px;
+        }
+        .card{
+            background:var(--card);
+            padding:18px;
+            border-radius:12px;
+            box-shadow:0 6px 20px rgba(2,6,23,0.06);
+        }
+        .card h2{margin:0 0 8px;font-size:1.05rem}
+        .support-info{
+            display:flex;
+            gap:12px;
+            flex-wrap:wrap;
+        }
+        .badge{
+            padding:8px 12px;
+            border-radius:8px;
+            background:#f3f4f6;
+            color:var(--muted);
+            font-weight:600;
+            font-size:0.9rem;
+        }
+        .contact-list{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+        .contact-item{display:flex;gap:12px;align-items:center}
+        .contact-item strong{min-width:90px;display:inline-block;color:#111827}
+        a.link{color:var(--accent);text-decoration:none}
+        .support-sidenav{display:flex;flex-direction:column;gap:12px}
+        .sidenav-item{
+            padding:10px;
+            border-radius:8px;
+            background:#fbfdff;
+            border:1px solid #eef2f7;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:8px;
+        }
+        form .row{display:flex;gap:8px;margin-bottom:10px}
+        form label{font-size:0.85rem;color:var(--muted);display:block;margin-bottom:6px}
+        input[type="text"],input[type="email"],select,textarea{
+            width:100%;
+            padding:10px 12px;
+            border-radius:8px;
+            border:1px solid #e6eef8;
+            background:#fff;
+            font-size:0.95rem;
+            box-sizing:border-box;
+        }
+        textarea{min-height:110px;resize:vertical}
+        .muted{color:var(--muted);font-size:0.9rem}
+        .faq{margin-top:12px}
+        .faq-item{border-top:1px dashed #eef2f7;padding:12px 0}
+        .faq-item summary{cursor:pointer;font-weight:600}
+        .kb-list{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+        .kb-list a{display:block;padding:10px;border-radius:8px;background:#fbfdff;border:1px solid #eef2f7;text-decoration:none;color:#0f172a}
+        .footer-note{margin-top:14px;font-size:0.85rem;color:var(--muted)}
+        .success{background:linear-gradient(90deg,#dcfce7,#bbf7d0);color:var(--success);padding:10px;border-radius:8px;border:1px solid #bbf7d0;margin-top:10px}
+        .error{background:#fff1f2;color:var(--danger);padding:10px;border-radius:8px;border:1px solid #fecaca;margin-top:10px}
+        @media (max-width:880px){
+            .grid{grid-template-columns:1fr; padding-bottom:40px}
+            .sidenav-item{flex-direction:column;align-items:flex-start}
+        }
+        @media (max-width:520px){
+            header{flex-direction:column;align-items:flex-start;gap:10px}
+            .header-actions{margin-left:0;width:100%;justify-content:flex-end}
+        }
+    </style>
+</head>
+<body>
+    <main class="container" role="main">
+        <header>
+            <div class="logo" aria-hidden="true">POS</div>
+            <div>
+                <h1>Soporte técnico — POS Nómina</h1>
+                <p class="lead">Ayuda, documentación y envío de tickets para resolver incidencias y dudas relacionadas con la solución de nómina.</p>
+            </div>
+
+            <nav class="header-actions" aria-label="Acciones de usuario">
+                <a class="login-link" href="login.html" title="Iniciar sesión">
+                    <button class="btn secondary" type="button">Iniciar sesión</button>
+                </a>
+            </nav>
+        </header>
+
+        <section class="grid" aria-label="Soporte principal">
+            <div class="card" aria-labelledby="main-heading">
+                <h2 id="main-heading">Enviar ticket de soporte</h2>
+                <p class="muted">Complete el formulario para crear un ticket. Nuestro equipo responde dentro de las horas hábiles.</p>
+
+                <form id="ticketForm" action="/submit-ticket" method="post" novalidate>
+                    <div class="row">
+                        <div style="flex:1">
+                            <label for="name">Nombre</label>
+                            <input id="name" name="name" type="text" required placeholder="Ej. María Pérez" />
+                        </div>
+                        <div style="width:180px">
+                            <label for="priority">Prioridad</label>
+                            <select id="priority" name="priority" required>
+                                <option value="medium">Media</option>
+                                <option value="low">Baja</option>
+                                <option value="high">Alta</option>
+                                <option value="urgent">Urgente</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div style="flex:1">
+                            <label for="email">Correo electrónico</label>
+                            <input id="email" name="email" type="email" required placeholder="soporte@empresa.com" />
+                        </div>
+                        <div style="width:180px">
+                            <label for="phone">Teléfono</label>
+                            <input id="phone" name="phone" type="text" placeholder="(opcional)" />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="category">Categoría</label>
+                        <select id="category" name="category" required>
+                            <option value="incidente">Incidente / Error</option>
+                            <option value="configuracion">Configuración</option>
+                            <option value="consulta">Consulta funcional</option>
+                            <option value="facturacion">Facturación</option>
+                            <option value="sugerencia">Sugerencia</option>
+                        </select>
+                    </div>
+
+                    <div style="margin-top:10px">
+                        <label for="description">Descripción del problema</label>
+                        <textarea id="description" name="description" required placeholder="Describa el comportamiento, pasos para reproducir y capturas si aplica"></textarea>
+                    </div>
+
+                    <div style="display:flex;gap:10px;margin-top:12px;align-items:center">
+                        <button type="submit" class="btn">Enviar ticket</button>
+                        <button type="reset" class="btn secondary">Limpiar</button>
+                        <div id="formStatus" style="margin-left:auto"></div>
+                    </div>
+
+                    <div class="footer-note">Si el problema es urgente, contacte por teléfono o chat en vivo. No adjunte información sensible en el formulario.</div>
+                </form>
+
+                <section class="faq" aria-label="Preguntas frecuentes">
+                    <h2 style="margin-top:16px">Preguntas frecuentes</h2>
+
+                    <details class="faq-item">
+                        <summary>¿Cuánto tiempo tardan en responder?</summary>
+                        <div class="muted" style="margin-top:8px">Durante horario hábil: 2–8 horas para prioridades alta/urgente; 24–72 horas para baja/normal.</div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary>¿Dónde encuentro la guía de instalación?</summary>
+                        <div class="muted" style="margin-top:8px">En la sección "Documentación" más abajo hay enlaces a guías rápidas y manuales completos.</div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary>¿Cómo puedo reportar un bug crítico?</summary>
+                        <div class="muted" style="margin-top:8px">Marque la prioridad como "Urgente", describa pasos para reproducir y adjunte registros o capturas. También llame al número de soporte.</div>
+                    </details>
+                </section>
+            </div>
+
+            <aside class="support-sidenav" aria-label="Información de contacto y recursos">
+                <div class="card">
+                    <h2>Contacto rápido</h2>
+                    <div class="contact-list">
+                        <div class="contact-item">
+                            <strong>Teléfono</strong>
+                            <a class="link" href="tel:+34123456789">+34 123 456 789</a>
+                        </div>
+                        <div class="contact-item">
+                            <strong>Email</strong>
+                            <a class="link" href="mailto:soporte@empresa.com">soporte@empresa.com</a>
+                        </div>
+                        <div class="contact-item">
+                            <strong>Horario</strong>
+                            <span class="muted">Lun–Vie 09:00–18:00 (GMT+1)</span>
+                        </div>
+                        <div class="contact-item">
+                            <strong>Chat</strong>
+                            <a class="link" href="chat.html">Abrir chat en vivo</a>
+                        </div>
+                    </div>
+
+                    <div style="margin-top:12px">
+                        <h3 style="margin:0 0 8px 0">Estado del sistema</h3>
+                        <div class="sidenav-item" aria-hidden="false">
+                            <span>Servicios Principales</span>
+                            <span class="badge">Operativo</span>
+                        </div>
+                        <div class="sidenav-item" style="margin-top:8px">
+                            <span>Servicios de Reportes</span>
+                            <span class="badge" style="background:#fff7ed;color:#92400e;border:1px solid #ffedd5">Intermitente</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card"></div>
+                    <h2>Documentación y recursos</h2>
+                    <div class="kb-list" role="list"></div>
+                        <a href="guia_instalacion.html" role="listitem" class="link">Guía de instalación (PDF)</a>
+                        <a href="guia_usuario.html" role="listitem" class="link">Manual de usuario</a>
+                        <a href="/docs/errores-comunes.html" role="listitem" class="link">Errores comunes y soluciones</a>
+                        <a href="/docs/actualizaciones.html" role="listitem" class="link">Notas de la versión</a>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Enlaces útiles</h2>
+                    <div class="support-info" style="margin-top:8px">
+                        <div style="flex:1">
+                            <div class="badge">Portal</div>
+                            <p class="muted" style="margin-top:6px">Accede a tu panel y a tickets previos en el portal de clientes.</p>
+                            <a class="link" href="/portal">Ir al portal</a>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </section>
+
+        <footer style="max-width:1100px;margin:20px auto 60px;padding:0 24px;color:var(--muted);font-size:0.9rem"></footer>
+            <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center">
+                <div>© 2025 POS Nómina. Todos los derechos reservados.</div>
+                <div style="display:flex;gap:14px;align-items:center">
+                    <a class="link" href="/privacidad">Política de privacidad</a>
+                    <a class="link" href="/terminos">Términos y condiciones</a>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <script>
+        (function(){
+            const form = document.getElementById('ticketForm');
+            const status = document.getElementById('formStatus');
+
+            form.addEventListener('submit', function(ev){
+                ev.preventDefault();
+                status.textContent = '';
+                // Validación simple
+                const name = form.name.value.trim();
+                const email = form.email.value.trim();
+                const desc = form.description.value.trim();
+                if(!name || !email || !desc){
+                    status.innerHTML = '<div class="error">Completa los campos obligatorios antes de enviar.</div>';
+                    return;
+                }
+
+                // Simulación de envío (reemplazar por fetch() al backend real)
+                status.innerHTML = '<div class="muted">Enviando ticket…</div>';
+                setTimeout(() => {
+                    status.innerHTML = '<div class="success">Ticket enviado correctamente. Recibirás confirmación por correo.</div>';
+                    form.reset();
+                }, 900);
+            });
+        })();
+    </script>
+</body>
+</html>
