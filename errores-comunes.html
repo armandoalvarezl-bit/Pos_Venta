@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Errores comunes y soluciones — POS Nómina</title>
+    <meta name="description" content="Soluciones rápidas para errores comunes en POS Nómina." />
+    <style>
+        :root{
+            --bg:#f5f7fb;
+            --card:#ffffff;
+            --accent:#0b74de;
+            --muted:#6b7280;
+            --success:#16a34a;
+            --danger:#dc2626;
+            font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+        }
+        html,body{height:100%}
+        body{
+            margin:0;
+            background:linear-gradient(180deg,var(--bg),#eef2f7);
+            color:#0f172a;
+            -webkit-font-smoothing:antialiased;
+            -moz-osx-font-smoothing:grayscale;
+            line-height:1.4;
+        }
+        .container{
+            max-width:900px;
+            margin:32px auto;
+            padding:24px;
+        }
+        header{
+            display:flex;
+            gap:16px;
+            align-items:center;
+            margin-bottom:20px;
+        }
+        .logo{
+            width:64px;
+            height:64px;
+            background:linear-gradient(135deg,var(--accent),#0369a1);
+            border-radius:10px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            color:#fff;
+            font-weight:700;
+            box-shadow:0 6px 18px rgba(11,116,222,0.16);
+            flex:0 0 64px;
+        }
+        h1{margin:0;font-size:1.25rem}
+        p.lead{margin:4px 0 0;color:var(--muted);font-size:0.95rem}
+        .header-actions{margin-left:auto; display:flex; gap:8px; align-items:center}
+        .login-link{text-decoration:none}
+        .btn{
+            display:inline-flex;
+            gap:8px;
+            align-items:center;
+            justify-content:center;
+            padding:10px 14px;
+            border-radius:8px;
+            background:var(--accent);
+            color:#fff;
+            border:0;
+            cursor:pointer;
+            font-weight:600;
+        }
+        .btn.secondary{background:#fff;color:var(--accent);border:1px solid #dbeefe}
+        .card{
+            background:var(--card);
+            padding:18px;
+            border-radius:12px;
+            box-shadow:0 6px 20px rgba(2,6,23,0.06);
+            margin-bottom:16px;
+        }
+        .card h2{margin:0 0 8px;font-size:1.05rem}
+        .error-item{margin-top:16px}
+        .error-item h3{margin:8px 0;color:var(--danger)}
+        .error-item .code{
+            background:#f3f4f6;
+            padding:8px 12px;
+            border-radius:6px;
+            font-family:monospace;
+            font-size:0.9rem;
+            color:#111827;
+            margin:8px 0;
+            overflow-x:auto;
+        }
+        .error-item .solution{
+            color:var(--muted);
+            line-height:1.6;
+            margin-top:8px;
+        }
+        .muted{color:var(--muted);font-size:0.9rem}
+        footer{margin-top:32px;color:var(--muted);font-size:0.9rem;border-top:1px solid #eef2f7;padding-top:16px}
+        a.link{color:var(--accent);text-decoration:none}
+        @media (max-width:520px){
+            header{flex-direction:column;align-items:flex-start;gap:10px}
+            .header-actions{margin-left:0;width:100%;justify-content:flex-end}
+        }
+    </style>
+</head>
+<body>
+    <main class="container" role="main">
+        <header>
+            <div class="logo" aria-hidden="true">POS</div>
+            <div>
+                <h1>Errores comunes y soluciones</h1>
+                <p class="lead">Soluciones rápidas para problemas frecuentes en POS Nómina.</p>
+            </div>
+
+            <nav class="header-actions" aria-label="Acciones de usuario">
+                <a class="login-link" href="../soporte.html" title="Regresar a soporte">
+                    <button class="btn secondary" type="button">Regresar a soporte</button>
+                </a>
+                <a class="login-link" href="../login.html" title="Iniciar sesión">
+                    <button class="btn" type="button">Iniciar sesión</button>
+                </a>
+            </nav>
+        </header>
+
+        <section role="main">
+            <div class="card">
+                <h2>Error 401: No autorizado</h2>
+                <div class="error-item">
+                    <h3>Problema</h3>
+                    <div class="code">Error 401: Unauthorized - Invalid token or session expired</div>
+                    <div class="solution">
+                        <strong>Solución:</strong>
+                        <ol>
+                            <li>Limpia el caché del navegador (Ctrl+Shift+Supr)</li>
+                            <li>Cierra sesión completamente</li>
+                            <li>Inicia sesión de nuevo con tu usuario y contraseña</li>
+                            <li>Si persiste, solicita restablecimiento de credenciales</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Error 500: Error interno del servidor</h2>
+                <div class="error-item">
+                    <h3>Problema</h3>
+                    <div class="code">Error 500: Internal Server Error</div>
+                    <div class="solution">
+                        <strong>Solución:</strong>
+                        <ol>
+                            <li>Espera 5 minutos y recarga la página (F5)</li>
+                            <li>Prueba en otro navegador o en modo incógnito</li>
+                            <li>Verifica tu conexión a internet</li>
+                            <li>Si el error persiste, contacta a soporte e incluye el código de error</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>No puedo calcular la nómina</h2>
+                <div class="error-item">
+                    <h3>Problema</h3>
+                    <p class="solution">El sistema no genera el cálculo de nómina o muestra un error al procesar.</p>
+                    <div class="solution">
+                        <strong>Solución:</strong>
+                        <ol>
+                            <li>Verifica que todos los empleados tengan datos completos (nombre, documento, salario)</li>
+                            <li>Comprueba que las reglas salariales estén configuradas correctamente</li>
+                            <li>Asegúrate de que el periodo de pago esté dentro del rango permitido</li>
+                            <li>Intenta con un empleado de prueba para aislar el problema</li>
+                            <li>Si persiste, exporta los logs y contacta a soporte</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Los reportes no se generan</h2>
+                <div class="error-item">
+                    <h3>Problema</h3>
+                    <p class="solution">Al intentar exportar un reporte, el navegador no descarga el archivo.</p>
+                    <div class="solution">
+                        <strong>Solución:</strong>
+                        <ol>
+                            <li>Permite que el navegador descargue archivos desde este sitio</li>
+                            <li>Verifica que tu carpeta de descargas tenga espacio disponible</li>
+                            <li>Desactiva bloqueadores de anuncios (pueden bloquear descargas)</li>
+                            <li>Intenta con otro navegador (Chrome, Firefox, Edge)</li>
+                            <li>Asegúrate de que los datos del reporte no estén vacíos</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Datos incorrectos en la ficha del empleado</h2>
+                <div class="error-item">
+                    <h3>Problema</h3>
+                    <p class="solution">Los datos del empleado muestran valores incorrectos o desactualizados.</p>
+                    <div class="solution">
+                        <strong>Solución:</strong>
+                        <ol>
+                            <li>Recarga la página (F5) para obtener datos frescos</li>
+                            <li>Edita los campos y guarda los cambios</li>
+                            <li>Si los cambios no se guardan, comprueba tus permisos de usuario</li>
+                            <li>Intenta en modo incógnito para descartar problemas de caché</li>
+                            <li>Si el error persiste, contacta a tu administrador</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>La página carga lentamente</h2>
+                <div class="error-item">
+                    <h3>Problema</h3>
+                    <p class="solution">POS Nómina tarda mucho tiempo en cargar o responde lentamente.</p>
+                    <div class="solution">
+                        <strong>Solución:</strong>
+                        <ol>
+                            <li>Verifica tu velocidad de internet (requiere al menos 2 Mbps)</li>
+                            <li>Cierra otras pestañas y aplicaciones que consuman ancho de banda</li>
+                            <li>Limpia el caché del navegador (Ctrl+Shift+Supr)</li>
+                            <li>Desactiva extensiones que puedan ralentizar el navegador</li>
+                            <li>Intenta en otro dispositivo para aislar el problema</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>¿No encuentras tu error?</h2>
+                <p class="muted">Si tu problema no está en esta lista, por favor:</p>
+                <ol>
+                    <li>Describe el error de forma detallada</li>
+                    <li>Incluye los pasos que realizaste antes de que ocurra</li>
+                    <li>Adjunta capturas de pantalla</li>
+                    <li><a class="link" href="../soporte.html">Envía un ticket de soporte</a></li>
+                </ol>
+            </div>
+        </section>
+
+        <footer>
+            <p>© 2025 POS Nómina. Todos los derechos reservados. | <a class="link" href="../soporte.html">Volver a soporte</a></p>
+        </footer>
+    </main>
+</body>
+</html>
